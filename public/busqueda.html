@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Búsqueda en Tiempo Real</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="navbar"></div>
+
+  <script>
+    // Insertar el contenido de navbar.html en el elemento con id "navbar"
+    fetch('/navbar.html')
+         .then(response => response.text())
+         .then(data => {
+             document.getElementById('navbar').innerHTML = data;
+         })
+         .catch(error => console.error('Error cargando el navbar:', error));
+
+    // Solicitar el tipo de usuario y ajustar el menú en función de este
+    fetch('/tipo-usuario')
+        .then(response => response.json())
+        .then(data => {
+            const menu = document.getElementById('menu');
+            const tipoUsuario = data.tipo_usuario;
+
+            menu.innerHTML += '<li><a href="/">Inicio</a></li>';
+            // Agregar opciones de menú según el tipo de usuario
+            if (tipoUsuario === 'admin' || tipoUsuario === 'tecnico' ) {
+              menu.innerHTML += '<li><a href="/equipos.html">Equipos</a></li>';
+            } 
+            if (tipoUsuario === 'admin') {
+              menu.innerHTML += '<li><a href="/busqueda.html">Usuarios</a></li>';
+              menu.innerHTML += '<li><a href="/tablas">Gestionar Tablas</a></li>';
+            }
+            
+            // Opción de cerrar sesión para todos los tipos de usuario
+            menu.innerHTML += '<li><a href="/logout">Cerrar Sesión</a></li>';
+        })
+        
+        .catch(error => {
+          menu.innerHTML += '<li><a href="/login.html">Iniciar Sesion</a></li>'
+          menu.innerHTML += '<li><a href="/registro.html">Registrarse</a></li>'
+        });
+  </script>
+    <br/>
+<form action="/eliminar_usuario" method="POST">
+    <h1>Eliminar usuario</h1>
+   <label for="id">Id del usuario:</label>
+   <input type="number" id="id" name="id" required>
+   <button type="submit">Continuar</button>
+ </form>
+  <h1>Búsqueda en Tiempo Real</h1>
+  <input type="text" id="search" placeholder="Buscar usuario..." />
+  <ul id="results"></ul>
+
+  <script>
+    document.getElementById('search').addEventListener('keyup', function() {
+      const query = this.value;
+      fetch(`/buscar?query=${query}`)
+        .then(res => res.json())
+        .then(data => {
+          const results = document.getElementById('results');
+          results.innerHTML = '';
+          data.forEach(usuario => {
+            const li = document.createElement('li');
+            li.textContent = `${usuario.id} - ${usuario.nombre_usuario}`;
+            results.appendChild(li);
+          });
+        });
+    });
+  </script>
+
+
+<br />
+</body>
+</html>

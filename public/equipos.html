@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+      <ul id="menu"></ul>
+  </nav>
+  <script>
+    // Insertar el contenido de navbar.html en el elemento con id "navbar"
+    fetch('/navbar.html')
+         .then(response => response.text())
+         .then(data => {
+             document.getElementById('navbar').innerHTML = data;
+         })
+         .catch(error => console.error('Error cargando el navbar:', error));
+
+    // Solicitar el tipo de usuario y ajustar el menú en función de este
+    fetch('/tipo-usuario')
+        .then(response => response.json())
+        .then(data => {
+            const menu = document.getElementById('menu');
+            const tipoUsuario = data.tipo_usuario;
+
+            menu.innerHTML += '<li><a href="/">Inicio</a></li>';
+            // Agregar opciones de menú según el tipo de usuario
+            if (tipoUsuario === 'admin' || tipoUsuario === 'tecnico' ) {
+              menu.innerHTML += '<li><a href="/equipos.html">Equipos</a></li>';
+            } 
+            if (tipoUsuario === 'admin') {
+              menu.innerHTML += '<li><a href="/busqueda.html">Usuarios</a></li>';
+              menu.innerHTML += '<li><a href="/tablas">Gestionar Tablas</a></li>';
+            }
+            
+            // Opción de cerrar sesión para todos los tipos de usuario
+            menu.innerHTML += '<li><a href="/logout">Cerrar Sesión</a></li>';
+        })
+        
+        .catch(error => {
+          menu.innerHTML += '<li><a href="/login.html">Iniciar Sesion</a></li>'
+          menu.innerHTML += '<li><a href="/registro.html">Registrarse</a></li>'
+        });
+  </script>
+
+<br/>
+  <form action="/insertar_datos" method="POST">
+    <h2>Insertar datos</h2>
+      <label for="mardis">Insertar en:</label>
+      <select name="mardis" id="mardis">
+        <option value="marcas">Marcas</option>
+        <option value="dispositivos">Dispositivos</option>
+     </select>
+     <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required>
+      <button type="submit">Guardar Cambios</button>
+    </form>
+<br/>
+<button onclick="window.location.href='/marcas'">Marcas</button>
+<button onclick="window.location.href='/dispositivos'">Dispositivos</button>
+<br/>
+<form action="/ins_equipos" method="POST">
+  <h2>Insertar Equipo</h2>
+    <label for="marca">Id de marca:</label>
+<input type="number" id="marca" name="marca" required>
+<label for="dispositivo">Id de dispositivo:</label>
+    <input type="text" id="dispositivo" name="dispositivo" required>
+<label for="modelo">Modelo:</label>
+<input type="text" id="modelo" name="modelo" required>
+<label for="numeross">Numero de serie:</label>
+    <input type="number" id="numeross" name="numeross" required>
+<label for="fechai">Fecha de ingreso: (aaaa/mm/dd)</label>
+    <input type="text" id="fechai" name="fechai" required>
+<label for="tecnico">Tecnico encargado:</label>
+    <input type="text" id="tecnico" name="tecnico" required>
+<label for="fechao">Fecha de salida: (aaaa/mm/dd)</label>
+    <input type="text" id="fechao" name="fechao" required>
+    <button type="submit">Guardar Cambios</button>
+  </form>
+<br/>
+<button onclick="window.location.href='/equipos'">Equipos</button>
+<br/>
+  <form action="/actualizar_tabla" method="POST">
+    <h2>Actualizar Tablas</h2>
+    <label for="nombre_tablatt">Nombre de la tabla:</label>
+      <select name="nombre_tablatt" id="nombre_tablatt">
+      <option value="marcas">Marcas</option>
+      <option value="dispositivos">Dispositivos</option>
+      <option value="equipos">Equipos</option>
+   </select>
+    <label for="nombre_columna">Nombre de la columna:</label>
+    <input type="text" id="nombre_columna" name="nombre_columna" required>
+    <label for="dato_nuevo">Dato nuevo:</label>
+    <input type="text" id="dato_nuevo" name="dato_nuevo" required>
+    <label for="identificador">Identificador de posicion:</label>
+    <input type="text" id="identificador" name="identificador" required>
+    <label for="dato_identificador">Dato de identificacion:</label>
+    <input type="text" id="dato_identificador" name="dato_identificador" required>
+    <button type="submit">Guardar Cambios</button>
+  </form>
+<br/>  
+
+
+<form action="/eliminarmde" method="POST">
+  <h2>Eliminar datos</h2>
+    <label for="mde">Eliminar:</label>
+    <select name="mde" id="mde">
+      <option value="marcas">Marcas</option>
+      <option value="dispositivos">Dispositivos</option>
+      <option value="equipos">Equipos</option>
+   </select>
+   <label for="idf">Identificador:</label>
+    <input type="text" id="idf" name="idf" required>
+   <label for="dato_idf">Dato identificador:</label>
+    <input type="text" id="dato_idf" name="dato_idf" required>
+    <button type="submit">Eliminar</button>
+  </form>
+<br/>
+
+<h1>Cargar Equipos desde Excel</h1>
+<form action="/upload" method="POST" enctype="multipart/form-data">
+  <input type="file" name="excelFile" accept=".xlsx" />
+  <button type="submit">Subir Archivo</button>
+</form>
+</br>
+
+
+
+</body>
